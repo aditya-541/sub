@@ -12,7 +12,7 @@ from typing import Annotated
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 from starlette.requests import Request
 
@@ -103,6 +103,43 @@ def health() -> dict[str, str]:
         "mode": "local-development" if local else "chain",
         "chain": "not-connected" if local else "not-verified",
     }
+
+
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
+def homepage() -> str:
+    """Give visitors a clear entry point instead of FastAPI's default 404."""
+    return """<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#10151d">
+    <title>Subnet Factory API</title>
+    <style>
+      :root { color-scheme: dark; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #10151d; color: #edf2f7; }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; }
+      main { width: min(640px, calc(100% - 40px)); padding: 36px; border: 1px solid #293342; border-radius: 14px; background: #171f2a; box-sizing: border-box; }
+      h1 { margin: 0 0 12px; font-size: 28px; letter-spacing: -.03em; }
+      p { color: #b2bfce; line-height: 1.6; }
+      nav { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+      a { color: #dceaff; text-decoration: none; border: 1px solid #3b4a5e; border-radius: 8px; padding: 10px 14px; }
+      a:hover { background: #223044; }
+      small { color: #8796a8; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Subnet Factory API</h1>
+      <p>This service coordinates subnet architecture, miner contributions, validation, and project builds for connected applications.</p>
+      <p>It is an API service, not the Tensor Studio web interface. Factory client endpoints require a server-side bearer token.</p>
+      <nav>
+        <a href="/docs">API documentation</a>
+        <a href="/health">Service health</a>
+      </nav>
+      <p><small>Subnet Factory · Bittensor SDK 11</small></p>
+    </main>
+  </body>
+</html>"""
 
 
 async def _authenticate_miner_request(request: Request, body: bytes) -> str | None:
