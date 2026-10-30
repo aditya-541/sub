@@ -1,0 +1,4 @@
+{$FACTORY_DOMAIN} {
+    encode zstd gzip
+    reverse_proxy factory-service:8000
+}

@@ -1,0 +1,5 @@
+FROM qwen3.5:2b
+
+# Keep memory use reasonable on machines with 8 GB of RAM.
+PARAMETER num_ctx 4096
+PARAMETER temperature 0.15

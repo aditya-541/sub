@@ -1,0 +1,63 @@
+services:
+  factory-service:
+    build: .
+    env_file:
+      - ${FACTORY_ROLE_ENV_FILE:-.env}
+    ports:
+      - "${FACTORY_HOST_BIND:-127.0.0.1}:${FACTORY_HOST_PORT:-8000}:8000"
+    environment:
+      FACTORY_PORT: "8000"
+      BT_WALLET_PATH: ${BT_WALLET_PATH:-/home/factory/.bittensor/wallets}
+    volumes:
+      - factory-data:/app/data
+      - factory-artifacts:/app/artifacts
+      - ${FACTORY_HOTKEYS_HOST_DIR:-${HOME}/.bittensor/wallets/${BT_WALLET:-default}/hotkeys}:/home/factory/.bittensor/wallets/${BT_WALLET:-default}/hotkeys:ro
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  factory-worker:
+    build: .
+    env_file:
+      - ${FACTORY_ROLE_ENV_FILE:-.env}
+    command:
+      - factory-worker
+    volumes:
+      - factory-data:/app/data
+      - factory-artifacts:/app/artifacts
+      - ${FACTORY_HOTKEYS_HOST_DIR:-${HOME}/.bittensor/wallets/${BT_WALLET:-default}/hotkeys}:/home/factory/.bittensor/wallets/${BT_WALLET:-default}/hotkeys:ro
+    restart: unless-stopped
+    profiles:
+      - validator
+
+  caddy:
+    image: caddy:2-alpine
+    environment:
+      FACTORY_DOMAIN: ${FACTORY_DOMAIN:-localhost}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      factory-service:
+        condition: service_healthy
+    restart: unless-stopped
+    profiles:
+      - public
+
+volumes:
+  factory-data:
+  factory-artifacts:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "bittensor-subnet-factory"
+version = "0.1.0"
+description = "Decentralized Bittensor subnet for subnet discovery, design, generation, and validation"
+requires-python = ">=3.10,<3.15"
+dependencies = [
+  "bittensor==11.3.0",
+  "fastapi>=0.115,<1",
+  "httpx>=0.28,<1",
+  "pydantic>=2.10,<3",
+  "uvicorn[standard]>=0.34,<1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<9", "ruff>=0.9,<1"]
+
+[project.scripts]
+factory-submit-weights = "subnet_factory.submit_weights:main"
+factory-worker = "subnet_factory.worker:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["subnet_factory"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

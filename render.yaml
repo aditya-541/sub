@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: subnet-factory
+    runtime: docker
+    plan: starter
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: bash scripts/run_render_service.sh
+    healthCheckPath: /health
+    disk:
+      name: factory-data
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - key: FACTORY_API_TOKEN
+        generateValue: true
+      - key: FACTORY_STATE_DB
+        value: /app/data/factory.sqlite3
+      - key: FACTORY_ARTIFACT_ROOT
+        value: /app/data/artifacts
+      - key: FACTORY_BIND_HOST
+        value: 0.0.0.0
+      - key: FACTORY_PORT
+        value: 10000
+      - key: FACTORY_BUILD_QUEUE_LIMIT
+        value: 16
