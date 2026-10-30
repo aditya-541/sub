@@ -93,6 +93,8 @@ The current free-plan deployment is available at <https://production-subnet-fact
 
 This is an initial hosted API smoke-test deployment, not a durable production service. It currently runs at 250 millicores and 512 MB RAM. Task state and generated files use `/tmp`, so a restart loses them. CreateOS bills compute by the second; the Free plan does not mean unlimited always-on compute. The current deployment has no registered Factory validator hotkey, configured netuid, or connected miners. Health, API authentication, and architecture-task persistence were verified, but generated subnet builds are not yet available until the Bittensor Factory participants are configured and online. A production rollout also needs durable task/artifact storage and a verified spend limit.
 
+The live build test outcome is recorded in [`docs/build-test-record.md`](docs/build-test-record.md). The API accepted the task, but the worker stopped before miner dispatch because the Production environment has no Factory netuid.
+
 ## Safety and status
 
 - No transaction is submitted automatically. Registration and activation require manual `btcli` operations; weight submission requires the separate interactive CLI and exact confirmation. The CreateOS API deployment is separate from GitHub OAuth and Tensor Studio integration. Chain mode reads the metagraph and uses an operator's local hotkey to sign peer requests.
