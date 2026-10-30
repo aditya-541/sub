@@ -87,9 +87,15 @@ Caddy obtains and renews HTTPS certificates when the domain resolves to the host
 
 This deployment runs one worker and a single-host SQLite queue. It is suitable for an initial accessible deployment, not horizontal scaling. It also does not register or activate the Factory on Bittensor; actual subnet generation requires registered Factory miners and validators to be online.
 
+### Current CreateOS deployment
+
+The current free-plan deployment is available at <https://production-subnet-factory-a541.tyzo.nodeops.app>. Its `/health` endpoint is public; Factory client routes require the `FACTORY_API_TOKEN` configured in the CreateOS Production environment. Set `SUBNET_FACTORY_URL` and `SUBNET_FACTORY_TOKEN` in the Tensor Studio **server** environment, never in browser code.
+
+This is an initial hosted API smoke-test deployment, not a durable production service. It currently runs at 250 millicores and 512 MB RAM. Task state and generated files use `/tmp`, so a restart loses them. CreateOS bills compute by the second; the Free plan does not mean unlimited always-on compute. The current deployment has no registered Factory validator hotkey, configured netuid, or connected miners. Health, API authentication, and architecture-task persistence were verified, but generated subnet builds are not yet available until the Bittensor Factory participants are configured and online. A production rollout also needs durable task/artifact storage and a verified spend limit.
+
 ## Safety and status
 
-- No transaction is submitted automatically. Registration and activation require manual `btcli` operations; weight submission requires the separate interactive CLI and exact confirmation. No cloud credentials, GitHub OAuth, or mainnet deployment are part of this milestone. Chain mode reads the metagraph and uses an operator's local hotkey to sign peer requests.
+- No transaction is submitted automatically. Registration and activation require manual `btcli` operations; weight submission requires the separate interactive CLI and exact confirmation. The CreateOS API deployment is separate from GitHub OAuth and Tensor Studio integration. Chain mode reads the metagraph and uses an operator's local hotkey to sign peer requests.
 - The local generator is a development interface, not a sandbox. Production execution needs isolated worker containers, resource limits, egress controls, and artifact scanning.
 - Validation scores are only a starting benchmark. They do not establish that generated code is correct or secure in every runtime environment.
 - Never describe a local task as a subnet registered or deployed on-chain.

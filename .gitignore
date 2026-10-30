@@ -13,3 +13,4 @@ artifacts/
 *.sqlite3-wal
 *.py[cod]
 .DS_Store
+.createos.json
