@@ -1,3 +1,6 @@
+from fastapi.testclient import TestClient
+
+from subnet_factory.api import app
 from subnet_factory.protocol import (
     AggregateRequest,
     BuildContribution,
@@ -10,6 +13,20 @@ from subnet_factory.protocol import (
 from subnet_factory.repository import RepositoryAssemblyError, assemble_project
 from subnet_factory.scoring import aggregate_accepted_files, validate_contribution
 from subnet_factory.weights import build_weight_plan
+
+
+def test_health_reports_missing_chain_configuration(monkeypatch):
+    monkeypatch.delenv("FACTORY_LOCAL_MODE", raising=False)
+    monkeypatch.delenv("FACTORY_NETUID", raising=False)
+
+    response = TestClient(app).get("/health")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "status": "ok",
+        "mode": "chain",
+        "chain": "not-configured",
+    }
 
 
 def discovery_suggestions(prefix):

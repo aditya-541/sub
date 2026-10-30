@@ -98,10 +98,14 @@ def _authorize_client(request: Request) -> None:
 @app.get("/health")
 def health() -> dict[str, str]:
     local = os.getenv("FACTORY_LOCAL_MODE") == "1"
+    netuid = os.getenv("FACTORY_NETUID", "").strip()
+    chain = (
+        "local-development" if local else "configured-unverified" if netuid else "not-configured"
+    )
     return {
         "status": "ok",
         "mode": "local-development" if local else "chain",
-        "chain": "not-connected" if local else "not-verified",
+        "chain": chain,
     }
 
 
